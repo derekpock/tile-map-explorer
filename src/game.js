@@ -1,66 +1,46 @@
-import Input from './input';
+import GameInfo from './gameinfo';
+import TestBackground from './testBackground';
 
-/** @class Game
-  * A class representing the high-level functionality
-  * of a game - the game loop, buffer swapping, etc.
-  */
 export default class Game {
-  /** @constructor
-    * Creates the game instance
-    * @param {integer} width - the width of the game screen in pixels
-    * @param {integer} heght - the height of the game screen in pixels
-    */
+
   constructor(width, height) {
-    this._start = null;
-    this.WIDTH = width;
-    this.HEIGHT = height;
-    this.input = new Input();
     this.entities = [];
+
+    this.gameInfo = new GameInfo(width, height);
 
     // Set up the back buffer
     this.backBuffer = document.createElement('canvas');
-    this.backBuffer.width = this.WIDTH;
-    this.backBuffer.height = this.HEIGHT;
+    this.backBuffer.width = width;
+    this.backBuffer.height = height;
     this.backBufferCtx = this.backBuffer.getContext('2d');
 
     // Set up the screen buffer
     this.screenBuffer = document.createElement('canvas');
-    this.screenBuffer.width = this.WIDTH;
-    this.screenBuffer.height = this.HEIGHT;
+    this.screenBuffer.width = width;
+    this.screenBuffer.height = height;
     this.screenBufferCtx = this.screenBuffer.getContext('2d');
     document.body.append(this.screenBuffer);
   }
-  /** @method addEntity
-    * Adds an entity to the game world
-    * Entities should have an update() and render()
-    * method.
-    * @param {Object} entity - the entity.
-    */
+
   addEntity(entity) {
     this.entities.push(entity);
   }
-  /** @method update
-    * Updates the game state
-    * @param {integer} elapsedTime - the number of milliseconds per frame
-    */
+
   update(elapsedTime) {
 
-    // Update game entitites
-    this.entities.forEach(entity => entity.update(elapsedTime, this.input));
+    // Update game entities
+    this.entities.forEach(entity => entity.update(elapsedTime, this.gameInfo));
 
-    // Swap input buffers
-    this.input.update();
+    this.gameInfo.update(elapsedTime);
   }
-  /** @method render
-    * Renders the game state
-    * @param {integer} elapsedTime - the number of milliseconds per frame
-    */
+
   render(elapsedTime) {
     // Clear the back buffer
     this.backBufferCtx.fillStyle = "white";
-    this.backBufferCtx.fillRect(0,0,this.WIDTH, this.HEIGHT);
+    this.backBufferCtx.fillRect(0, 0, this.gameInfo.width, this.gameInfo.height);
 
-    // TODO: Render game
+    TestBackground.render(this.backBufferCtx, this.gameInfo.width, this.gameInfo.height);
+    this.gameInfo.render(elapsedTime, this.backBufferCtx);
 
     // Render entities
     this.entities.forEach(entity => entity.render(elapsedTime, this.backBufferCtx));
@@ -68,11 +48,7 @@ export default class Game {
     // Flip the back buffer
     this.screenBufferCtx.drawImage(this.backBuffer, 0, 0);
   }
-  /** @method loop
-    * Updates and renders the game,
-    * and calls itself on the next draw cycle.
-    * @param {DOMHighResTimestamp} timestamp - the current system time
-    */
+
   loop(timestamp) {
     var elapsedTime = this._frame_start ? timestamp - this._frame_start : 0;
     this.update(elapsedTime);

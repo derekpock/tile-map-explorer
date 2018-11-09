@@ -1,39 +1,45 @@
-/** @module Player
-  * A class representing the player.
-  */
 export default class Player {
-  /** @constructor
-    * Constructs a new player instance
-    * @param {float} x - the player's x position
-    * @param {float} y - the player's y position
-    */
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.animationTimer = 0;
+    this.animationDuration = 250;
+    this.movementX = 0;
+    this.movementY = 0;
   }
 
-  /** @method update
-    * Updates the player
-    * @param {double} deltaT - the elapsed time
-    * @param {Input} input - the input object
-    */
-  update(deltaT, input) {
-    if(input.keyPressed("ArrowLeft")) this.x--;
-    if(input.keyPressed("ArrowRight")) this.x++;
-    if(input.keyPressed("ArrowUp")) this.y--;
-    if(input.keyPressed("ArrowDown")) this.y++;
+  update(deltaT, gameInfo) {
+    if(this.animationTimer <= 0) {
+      this.movementX = 0;
+      this.movementY = 0;
+      if(gameInfo.input.keyPressed("ArrowLeft")) {
+        this.movementX = -1;
+        this.x--;
+        this.animationTimer = this.animationDuration;
+      } else if (gameInfo.input.keyPressed("ArrowRight")) {
+        this.movementX = 1;
+        this.x++;
+        this.animationTimer = this.animationDuration
+      } else if (gameInfo.input.keyPressed("ArrowUp")) {
+        this.movementY = -1;
+        this.y--;
+        this.animationTimer = this.animationDuration;
+      } else if (gameInfo.input.keyPressed("ArrowDown")) {
+        this.movementY = 1;
+        this.y++;
+        this.animationTimer = this.animationDuration;
+      }
+    }
+    this.animationTimer -= deltaT;
   }
 
-  /** @method render
-    * Renders the player
-    * @param {double} deltaT - elapsed time
-    * @param {Context2D} context - the rendering context
-    */
-  render(deltaT, context) {
-    context.fillStyle = "blue";
-    context.beginPath();
-    context.arc(this.x, this.y, 25, 0, 2*Math.PI);
-    context.fill();
+  render(deltaT, ctx) {
+    ctx.fillStyle = "blue";
+    ctx.beginPath();
+    let x = (this.x - (this.animationTimer / this.animationDuration) * this.movementX) * 32 + 16;
+    let y = (this.y - (this.animationTimer / this.animationDuration) * this.movementY) * 32 + 16;
+    ctx.arc(x, y, 16, 0, 2*Math.PI);
+    ctx.fill();
   }
 
 }
