@@ -1,0 +1,15 @@
+{ "columns":3,
+ "image":"seth.png",
+ "imageheight":158,
+ "imagewidth":72,
+ "margin":0,
+ "name":"seth",
+ "spacing":0,
+ "tilecount":12,
+ "tiledversion":"1.2.0",
+ "tileheight":32,
+ "tilewidth":24,
+ "transparentcolor":"#209c00",
+ "type":"tileset",
+ "version":1.2
+}

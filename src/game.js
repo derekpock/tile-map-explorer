@@ -1,5 +1,4 @@
 import GameInfo from './gameinfo';
-import TestBackground from './testBackground';
 
 export default class Game {
 
@@ -39,7 +38,6 @@ export default class Game {
     this.backBufferCtx.fillStyle = "white";
     this.backBufferCtx.fillRect(0, 0, this.gameInfo.width, this.gameInfo.height);
 
-    TestBackground.render(this.backBufferCtx, this.gameInfo.width, this.gameInfo.height);
     this.gameInfo.render(elapsedTime, this.backBufferCtx);
 
     // Render entities
