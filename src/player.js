@@ -1,3 +1,4 @@
+/// Defines a player class
 export default class Player {
   constructor(x, y) {
     this.x = x;
@@ -10,18 +11,24 @@ export default class Player {
     this.movementY = 0;
     this.faceDirection = 2;
     this.playerHeightToDraw = 32;
+
+    // Load player image.
     this.playerImage = new Image();
     this.ready = false;
-    this.playerImage.onload = ((ev) => {
+    this.playerImage.onload = (() => {
       this.ready = true;
     });
     this.playerImage.src = "seth.png";
   }
 
+  /// Update the player, moving them if necessary and calculating animations.
   update(deltaT, gameInfo) {
     if(this.movementTimer <= 0) {
+      // Movement is only allowed when previous movement has finished
       this.movementX = 0;
       this.movementY = 0;
+
+      // Check if the tile in the requested direction is passable, then set various animation and movement variables.
       if(gameInfo.input.keyPressed("ArrowLeft")) {
         if(gameInfo.getTile(this.x - 1, this.y)["passable"]) {
           this.movementX = -1;
@@ -58,6 +65,8 @@ export default class Player {
     }
     this.movementTimer -= deltaT;
 
+    // If we are standing in a tile marked with water properties, cut off the lower part of the character to make it
+    // look like they are wading in the water.
     if(gameInfo.getTile(this.x, this.y)["water"]) {
       this.playerHeightToDraw = 24;
     } else {
@@ -65,7 +74,9 @@ export default class Player {
     }
   }
 
+  /// Render the player.
   render(deltaT, ctx) {
+    // Coordinates of the center of the tile the user is on.
     let x = (this.x - (this.movementTimer / this.movementDuration) * this.movementX) * 32 + 16;
     let y = (this.y - (this.movementTimer / this.movementDuration) * this.movementY) * 32 + 16;
 
@@ -77,7 +88,6 @@ export default class Player {
 
     // Seth image is 24x32 pixels, so we have an additional 6 pixel offset to put him in the middle of the tile.
     // We also calculated x and y from above for center circle, so there's an offset there as well.
-
     let imageX;
     let imageY = 32 * this.faceDirection;
     if(this.movementTimer > 0) {

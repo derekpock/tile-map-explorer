@@ -1,14 +1,17 @@
 import Input from './input';
 
+/// Information about the game's state, which is provided to each entity as their logic functions are called.
 export default class GameInfo {
 
+  /// Create the game info class, describing the canvas's width and height.
   constructor(width, height) {
     this.width = width;
     this.height = height;
     this.input = new Input();
-    this.tilesetJson = require('./resources/DLZP-Custom.json');
+    this.tilesetJson = require('./resources/DLZP-Custom.json'); // Imports JSON files into objects.
     this.tileImageWidth = Math.floor(this.tilesetJson.imagewidth / this.tilesetJson.tilewidth);
 
+    /// Load the tileset. Create an array of properties for each tile type which can be easily queried.
     this.tileset = [];
     for(let i = 0; i < this.tilesetJson.tiles.length; i++) {
       let properties = [];
@@ -22,22 +25,23 @@ export default class GameInfo {
       this.tileset[i] = properties;
     }
 
+    // Load the tilemap.
     this.tilemap = require('./resources/Map.json');
     this.numberOfTilesInMap = this.tilemap.width * this.tilemap.height;
 
+    // Load the tileset image.
     this.tileImage = new Image();
     this.ready = false;
-    let gameInfo = this;
-    this.tileImage.onload = function() {
-      gameInfo.ready = true;
-    };
+    this.tileImage.onload = (() => {
+      this.ready = true;
+    });
     this.tileImage.src = this.tilesetJson.image;
   }
 
-  update(elapsed) {
+  /// Update function for game info, if necessary.
+  update(elapsed) {}
 
-  }
-
+  /// Render the background of the world - the tilemap.
   render(elapsed, ctx) {
     if(this.ready) {
       for(let i = 0; i < this.numberOfTilesInMap; i++) {
@@ -56,6 +60,8 @@ export default class GameInfo {
     }
   }
 
+  /// Retrieve the tile object for a tile at the given coordinates.
+  /// The y coordinate can be omitted if the tiles are being indexed by a single dimension.
   getTile(x, y) {
     if(y === undefined) {
       y = 0;

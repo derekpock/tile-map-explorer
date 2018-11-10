@@ -1,4 +1,5 @@
 
+/// Takes and keeps track of user input.
 export default class Input {
 
   constructor() {
